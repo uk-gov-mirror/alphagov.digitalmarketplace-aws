@@ -501,9 +501,96 @@
           "timeFrom": null,
           "links": [],
           "thresholds": [],
-          "nullPointMode": "connected",
+          "nullPointMode": "null as zero",
           "renderer": "flot",
           "id": 9,
+          "linewidth": 1,
+          "steppedLine": false,
+          "targets": [
+            {
+              "refId": "A",
+              "target": "cloudwatch.application_400s.$environment.$app.400s.samplecount"
+            },
+            {
+              "refId": "B",
+              "target": "cloudwatch.application_300s.$environment.$app.300s.samplecount"
+            }
+          ],
+          "fill": 1,
+          "span": 12,
+          "title": "300-499 response count - $environment $app",
+          "tooltip": {
+            "sort": 0,
+            "shared": true,
+            "value_type": "individual",
+            "msResolution": false
+          },
+          "legend": {
+            "total": false,
+            "show": true,
+            "max": false,
+            "min": false,
+            "current": false,
+            "values": false,
+            "avg": false
+          },
+          "yaxes": [
+            {
+              "logBase": 1,
+              "show": true,
+              "max": null,
+              "format": "none",
+              "min": "0",
+              "label": null
+            },
+            {
+              "logBase": 1,
+              "show": true,
+              "max": null,
+              "format": "short",
+              "min": null,
+              "label": null
+            }
+          ],
+          "xaxis": {
+            "show": true,
+            "values": [],
+            "mode": "time",
+            "name": null
+          },
+          "seriesOverrides": [],
+          "percentage": false,
+          "type": "graph",
+          "error": false,
+          "editable": true,
+          "stack": false,
+          "timeShift": null,
+          "aliasColors": {},
+          "lines": true,
+          "points": false,
+          "datasource": null,
+          "pointradius": 5
+        }
+      ],
+      "showTitle": false,
+      "titleSize": "h6",
+      "height": 250,
+      "repeat": null,
+      "repeatRowId": null,
+      "repeatIteration": null,
+      "collapse": false
+    },
+    {
+      "title": "Dashboard Row",
+      "panels": [
+        {
+          "bars": false,
+          "timeFrom": null,
+          "links": [],
+          "thresholds": [],
+          "nullPointMode": "connected",
+          "renderer": "flot",
+          "id": 10,
           "linewidth": 1,
           "steppedLine": false,
           "targets": [
@@ -574,7 +661,7 @@
           "thresholds": [],
           "nullPointMode": "connected",
           "renderer": "flot",
-          "id": 10,
+          "id": 11,
           "linewidth": 1,
           "steppedLine": false,
           "targets": [
@@ -645,7 +732,7 @@
           "thresholds": [],
           "nullPointMode": "connected",
           "renderer": "flot",
-          "id": 11,
+          "id": 12,
           "linewidth": 1,
           "steppedLine": false,
           "targets": [
