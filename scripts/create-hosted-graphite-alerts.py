@@ -22,13 +22,13 @@ from docopt import docopt
 
 sys.path.insert(0, '.')
 
-from dmaws.hosted_graphite.create_alerts import create_alerts, create_missing_logs_alerts
+from dmaws.hosted_graphite.create_alerts import create_alerts, create_missing_logs_alerts, create_slow_request_alerts
 
 
 if __name__ == "__main__":
     api_key = docopt(__doc__)["<hosted_graphite_api_key>"]
 
-    # 500, 429 and slow request alerts
+    # 500, 429
     create_alerts(api_key)
 
     # Missing log alerts.
@@ -41,3 +41,4 @@ if __name__ == "__main__":
     ]
 
     create_missing_logs_alerts(api_key, environments, apps)
+    create_slow_request_alerts(api_key, environments, apps)

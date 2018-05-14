@@ -27,27 +27,17 @@ ALERTS = [
         "info": """429s responses being returned from the production router. Check CloudWatch for the IP address to make
 sure this is a crawler rather than a legitimate request"""
     },
+]
+
+
+SLOW_REQUEST_BUCKETS = [
     {
-        "name": "Production Router slow requests (10+ seconds)",
-        "metric": "cloudwatch.request_time_buckets.production.router.request_time_bucket_9.sum",
-        "alert_criteria": {
-            "type": "above",
-            "above_value": 5
-        },
-        "notification_channels": ["Notify DM 2ndline"],
-        "notification_type": ["every", 60],
-        "info": "5+ requests taking 10+ seconds from the production router in the last minute"
+        'description': '10+ seconds',
+        'name': 'request_time_bucket_9',
     },
     {
-        "name": "Production Router slow requests (5-10 seconds)",
-        "metric": "cloudwatch.request_time_buckets.production.router.request_time_bucket_8.sum",
-        "alert_criteria": {
-            "type": "above",
-            "above_value": 5
-        },
-        "notification_channels": ["Notify DM 2ndline"],
-        "notification_type": ["every", 60],
-        "info": "5+ requests taking 5-10 seconds from the production router in the last minute"
+        'description': '5-10 seconds',
+        'name': 'request_time_bucket_8',
     },
 ]
 
@@ -105,6 +95,20 @@ have inconsistencies. See HG alerting API for details""".format(app)
     return data
 
 
+def _get_slow_requests_alert_json(environment, app, bucket):
+    return {
+        "name": f'{environment} {app} slow requests ({bucket["description"]})',
+        "metric": f'cloudwatch.request_time_buckets.{environment}.{app}.{bucket["name"]}.sum',
+        "alert_criteria": {
+            "type": "above",
+            "above_value": 5
+        },
+        "notification_channels": ["Notify DM 2ndline"],
+        "notification_type": ["every", 60],
+        "info": f'5+ requests taking {bucket["description"]} from {environment} {app} in the last minute',
+    }
+
+
 def create_alert(api_key, alert):
     endpoint = "https://api.hostedgraphite.com/v2/alerts/"
     resp = requests.post(endpoint, auth=(api_key, ''), data=json.dumps(alert))
@@ -124,3 +128,11 @@ def create_alerts(api_key):
     for alert in ALERTS:
         print("Creating alert for {}".format(alert["name"]))
         create_alert(api_key, alert)
+
+
+def create_slow_request_alerts(api_key, environments, apps):
+    for environment in environments:
+        for app in apps:
+            print("Creating slow request alerts for {} {}".format(environment, app))
+            for bucket in SLOW_REQUEST_BUCKETS:
+                create_alert(api_key, _get_slow_requests_alert_json(environment, app, bucket))
