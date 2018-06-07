@@ -4,3 +4,6 @@ maintenance_mode: live
 
 api:
   memory: 2GB
+
+antivirus-api:
+  memory: 2GB

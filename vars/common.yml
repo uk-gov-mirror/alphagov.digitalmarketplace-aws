@@ -5,6 +5,7 @@ router:
     - api.{env}.marketplace.team
     - search-api.{env}.marketplace.team
     - assets.{env}.marketplace.team
+    - antivirus.{env}.marketplace.team
 
 api:
   routes:
@@ -17,6 +18,10 @@ search-api:
     - dm-search-api-{env}.cloudapps.digital
   services:
     - search_api_elasticsearch
+
+antivirus-api:
+  routes:
+    - dm-antivirus-api-{env}.cloudapps.digital
 
 user-frontend:
   routes:
