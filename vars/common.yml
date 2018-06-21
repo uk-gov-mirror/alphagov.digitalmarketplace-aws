@@ -44,5 +44,6 @@ brief-responses-frontend:
    - dm-{env}.cloudapps.digital/suppliers/opportunities
 
 db-backup:
+  disk_quota: 4G
   services:
     - digitalmarketplace_api_db
