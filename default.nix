@@ -15,8 +15,8 @@ in (with args; {
       pythonPackages.virtualenv
       pkgs.nodejs
       pkgs.jq
-      pkgs.aws-auth
       pkgs.sops
+      ((import ./aws-auth.nix) (with pkgs; { inherit stdenv fetchFromGitHub makeWrapper jq awscli openssl; }))
       (pkgs.terraform.overrideAttrs (oldAttrs: rec {
         name = "terraform-0.11.7";
         src = pkgs.fetchFromGitHub {
