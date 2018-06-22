@@ -6,12 +6,22 @@ POSTGRES_URI=postgres://postgres:@localhost:63306/postgres
 LATEST_PROD_DUMP=$(aws s3 ls digitalmarketplace-database-backups | grep production | sort -r | head -1 | awk '{print $4}')
 aws s3 cp s3://digitalmarketplace-database-backups/"${LATEST_PROD_DUMP}" ./"${LATEST_PROD_DUMP}"
 
+DUMP_FILE_NAME_BASENAME=$(basename -- "$DUMP_FILE_NAME")
+DUMP_FILE_NAME_FULL_EXTENSION="${DUMP_FILE_NAME_BASENAME#*.}"
+
+if [ $DUMP_FILE_NAME_FULL_EXTENSION = ".sql.gz" ]
+then
+    DUMP_FILTER="gunzip"
+else
+    DUMP_FILTER="cat"
+fi
+
 gpg2 --batch --import <($DM_CREDENTIALS_REPO/sops-wrapper -d $DM_CREDENTIALS_REPO/gpg/database-backups/secret.key.enc)
 
 echo -n $($DM_CREDENTIALS_REPO/sops-wrapper -d $DM_CREDENTIALS_REPO/gpg/database-backups/secret-key-passphrase.txt.enc) | \
   gpg2 --batch --passphrase-fd 0 --pinentry-mode loopback --decrypt ./"${LATEST_PROD_DUMP}" | \
-  gunzip | \
-  psql "${POSTGRES_URI}"
+  $DUMP_FILTER | \
+  pg_restore "${POSTGRES_URI}"
 
 gpg2 --list-secret-keys --with-colons --fingerprint | grep fpr | cut -c 13-52 | xargs -n1 gpg2 --batch --delete-secret-key
 rm "${LATEST_PROD_DUMP}"
