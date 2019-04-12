@@ -10,6 +10,7 @@ router:
 api:
   routes:
     - dm-api-{env}.cloudapps.digital
+  ip_whitelist_routes:
     - dm-api-{env}.cloudapps.digital/_metrics
   services:
     - digitalmarketplace_api_db
@@ -18,6 +19,7 @@ api:
 search-api:
   routes:
     - dm-search-api-{env}.cloudapps.digital
+  ip_whitelist_routes:
     - dm-search-api-{env}.cloudapps.digital/_metrics
   services:
     - search_api_elasticsearch
@@ -27,6 +29,7 @@ antivirus-api:
   memory: 2G
   routes:
     - dm-antivirus-api-{env}.cloudapps.digital
+  ip_whitelist_routes:
     - dm-antivirus-api-{env}.cloudapps.digital/_metrics
   services:
     - digitalmarketplace_prometheus
@@ -57,6 +60,7 @@ briefs-frontend:
 brief-responses-frontend:
   routes:
     - dm-{env}.cloudapps.digital/suppliers/opportunities
+  ip_whitelist_routes:
     - dm-{env}.cloudapps.digital/suppliers/opportunities/_metrics
   services:
     - digitalmarketplace_prometheus
