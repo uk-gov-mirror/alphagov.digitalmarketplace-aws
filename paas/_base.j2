@@ -1,7 +1,7 @@
 ---
 
 applications:
-  - name: {{ app|replace('_', '-') }}-release
+  - name: {{ app|replace('_', '-') }}
 
     docker:
       image: digitalmarketplace/{{ app|replace('_', '-') }}:{{ release }}
