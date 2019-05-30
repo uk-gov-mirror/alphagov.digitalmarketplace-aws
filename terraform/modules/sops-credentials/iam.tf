@@ -41,7 +41,10 @@ resource "aws_iam_role" "sops_credentials_access" {
     {
       "Effect": "Allow",
       "Principal": {
-        "AWS": [${join(",", formatlist("\"arn:aws:iam::%s:root\"", var.aws_account_ids))}]
+        "AWS": [
+          ${join(",", formatlist("\"arn:aws:iam::%s:root\"", var.aws_account_ids))},
+          "arn:aws:sts::047969882937:assumed-role/cd-digitalmarketplace-concourse-worker/i-03583a0f4b1572120"
+        ]
       },
       "Action": "sts:AssumeRole"
     }
