@@ -32,6 +32,7 @@ def get_variables_from_command_line_or_environment(vars):
 @click.command()
 @click.argument('environment', nargs=1, type=click.Choice(['preview', 'staging', 'production']))
 @click.argument('app', nargs=1)
+@click.argument('release', nargs=1)
 @click.option('--out-file', '-o',
               help="Output file, if empty the template content is printed to the stdout")
 @click.option('--vars-file', '-f', multiple=True, type=click.Path(exists=True),
@@ -41,12 +42,13 @@ def get_variables_from_command_line_or_environment(vars):
                    "Can be a key-value pair in the form option=value, "
                    "or the name of an environment variable."
               )
-def paas_manifest(environment, app, vars_file, var, out_file):
+def paas_manifest(environment, app, release, vars_file, var, out_file):
     """Generate a PaaS manifest file from a Jinja2 template"""
 
     variables = load_variables(environment, vars_file, {
         'environment': environment,
-        'app': app.replace('_', '-')
+        'app': app.replace('_', '-'),
+        'release': release,
     })
 
     template_file = f"paas/{app}.j2"

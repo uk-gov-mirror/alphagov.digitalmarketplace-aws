@@ -3,6 +3,9 @@
 applications:
   - name: {{ app|replace('_', '-') }}-release
 
+    docker:
+      image: digitalmarketplace/{{ app|replace('_', '-') }}:{{ release }}
+
     {% block routes %}
     {% if routes is defined %}
     routes:

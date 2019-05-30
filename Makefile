@@ -67,10 +67,11 @@ production: ## Set stage to production
 .PHONY: generate-manifest
 generate-manifest: virtualenv ## Generate manifest file for PaaS
 	$(if ${APPLICATION_NAME},,$(error Must specify APPLICATION_NAME))
+	$(if ${RELEASE_NAME},,$(error Must specify RELEASE_NAME))
 	$(if ${STAGE},,$(error Must specify STAGE))
 	$(if ${DM_CREDENTIALS_REPO},,$(error Must specify DM_CREDENTIALS_REPO))
 	@${DM_CREDENTIALS_REPO}/sops-wrapper -v > /dev/null # Avoid asking for MFA twice (when mandatory)
-	@${VIRTUALENV_ROOT}/bin/python scripts/generate-paas-manifest.py ${STAGE} ${APPLICATION_NAME} \
+	@${VIRTUALENV_ROOT}/bin/python scripts/generate-paas-manifest.py ${STAGE} ${APPLICATION_NAME} ${RELEASE_NAME} \
 		-f <(${DM_CREDENTIALS_REPO}/sops-wrapper -d ${DM_CREDENTIALS_REPO}/vars/${STAGE}.yaml) \
 		${ARGS}
 
