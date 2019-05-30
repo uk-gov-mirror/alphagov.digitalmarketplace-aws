@@ -71,6 +71,8 @@ generate-manifest: virtualenv ## Generate manifest file for PaaS
 	$(if ${STAGE},,$(error Must specify STAGE))
 	$(if ${DM_CREDENTIALS_REPO},,$(error Must specify DM_CREDENTIALS_REPO))
 	@${DM_CREDENTIALS_REPO}/sops-wrapper -v > /dev/null # Avoid asking for MFA twice (when mandatory)
+	
+	# generate manifest for digitalmarketplace/${APPLICATION_NAME}:${RELEASE_NAME} on ${STAGE}
 	@${VIRTUALENV_ROOT}/bin/python scripts/generate-paas-manifest.py ${STAGE} ${APPLICATION_NAME} ${RELEASE_NAME} \
 		-f <(${DM_CREDENTIALS_REPO}/sops-wrapper -d ${DM_CREDENTIALS_REPO}/vars/${STAGE}.yaml) \
 		${ARGS}
