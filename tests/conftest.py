@@ -1,5 +1,5 @@
 import pytest
-import mock
+from unittest import mock
 
 from dmaws.utils import mkdir_p as mkdir_p_orig
 
