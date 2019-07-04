@@ -65,6 +65,10 @@ def find_secrets_files(stage):
     :rtype: Path
     :raises ValueError: if the stage is not valid
     """
+    if not DM_CREDENTIALS_REPO.is_dir():
+        raise RuntimeError(
+            "Directory '{}' does not exist. Is the DM_CREDENTIALS_REPO environment variable set correctly?"
+        )
     fpath = DM_CREDENTIALS_REPO / "vars" / f"{stage}.yaml"
     if not fpath.is_file():
         raise ValueError(f"Expected a valid stage, but '{fpath}' does not exist")
