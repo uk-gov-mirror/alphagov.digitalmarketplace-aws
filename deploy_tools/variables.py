@@ -63,14 +63,17 @@ def load_variables(
     return variables
 
 
-def load_defaults(environment):
-    """Return the default variables for the environment
+def load_defaults(environment, app=None):
+    """Return the default variables for the environment and app
 
     :param Environment environment: The environment to get variables for
+    :param str app: The application to get variables for
     :returns: the variables
     :rtype: dict
     :raises ValueError: if environment is not valid
     """
+    app = app.replace("_", "-") if app else None
+
     vars_files = [VARS_DIR / "common.yml", VARS_DIR / f"{environment}.yml"]
     secrets_files = (
         [DM_CREDENTIALS_REPO / "vars" / f"{environment}.yaml"]
@@ -92,5 +95,8 @@ def load_defaults(environment):
         variables = merge_dicts(variables, read_yaml_file(path))
     for path in secrets_files:
         variables = merge_dicts(variables, decrypt(path))
+
+    if app:
+        variables = merge_dicts(variables, variables.get(app, {}))
 
     return variables

@@ -102,6 +102,14 @@ def test_load_defaults_always_includes_the_environment_in_output(environment):
     )
 
 
+def test_load_defaults_exposes_app_variables_if_app_arg_is_supplied(
+    file_factory, read_yaml_file, vars_dir
+):
+    file_factory.files[vars_dir / "testing.yml"] = {"test-app": {"d": "delta"}}
+    read_yaml_file.side_effect = file_factory
+    assert deploy_tools.variables.load_defaults("testing", "test-app")["d"] == "delta"
+
+
 def test_load_defaults_raises_value_error_if_environment_is_invalid(path_is_file):
     path_is_file.return_value = False
     expected_message = r'invalid environment "foobar": file ".*" does not exist'
