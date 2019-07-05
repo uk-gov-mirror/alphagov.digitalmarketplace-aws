@@ -7,12 +7,6 @@ import deploy_tools.variables
 
 
 @pytest.fixture(autouse=True)
-def sops_decrypt():
-    with patch("deploy_tools.variables.decrypt", return_value={}) as mock:
-        yield mock
-
-
-@pytest.fixture(autouse=True)
 def read_yaml_file():
     with patch("deploy_tools.variables.read_yaml_file", return_value={}) as mock:
         yield mock
@@ -58,7 +52,7 @@ def test_load_defaults_gets_all_the_vars_and_secrets_files(
 
 
 def test_load_defaults_common_variables_are_always_loaded_first_before_specific_variables(
-    read_yaml_file, vars_dir
+        read_yaml_file, sops_decrypt, vars_dir
 ):
     # use a single call_args_list
     sops_decrypt.call_args_list = read_yaml_file.call_args_list
