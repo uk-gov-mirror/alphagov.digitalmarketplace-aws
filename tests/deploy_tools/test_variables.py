@@ -35,6 +35,25 @@ def path_is_file():
         yield mock
 
 
+@pytest.fixture
+def file_factory(vars_dir, secrets_dir):
+    class FileFactory:
+        def __init__(self, files):
+            self.files = files
+
+        def __call__(self, path):
+            return self.files[path]
+
+    return FileFactory(
+        {
+            vars_dir / "common.yml": {"a": "alpha"},
+            vars_dir / "testing.yml": {"b": "beta"},
+            vars_dir / "users.yml": {"g": "gamma"},
+            secrets_dir / "testing.yaml": {"key": "my-super-secret-password"},
+        }
+    )
+
+
 def test_load_defaults_gets_all_the_vars_and_secrets_files(
     read_yaml_file, sops_decrypt, vars_dir, secrets_dir
 ):
@@ -61,16 +80,11 @@ def test_load_defaults_common_variables_are_always_loaded_first_before_specific_
     assert read_yaml_file.call_args_list[0] == call(vars_dir / "common.yml")
 
 
-def test_load_defaults_returns_a_merged_dict_of_variables(read_yaml_file, sops_decrypt, vars_dir, secrets_dir):
-    files = lambda path: {
-            vars_dir / "common.yml": {"a": "alpha"},
-            vars_dir / "testing.yml": {"b": "beta"},
-            vars_dir / "users.yml": {"g": "gamma"},
-            secrets_dir / "testing.yaml": {"key": "my-super-secret-password"},
-    }[path]
-
-    read_yaml_file.side_effect = files
-    sops_decrypt.side_effect = files
+def test_load_defaults_returns_a_merged_dict_of_variables(
+    read_yaml_file, sops_decrypt, file_factory
+):
+    read_yaml_file.side_effect = file_factory
+    sops_decrypt.side_effect = file_factory
 
     assert deploy_tools.variables.load_defaults("testing") == {
         "a": "alpha",
