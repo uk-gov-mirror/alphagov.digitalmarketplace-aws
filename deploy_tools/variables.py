@@ -84,7 +84,7 @@ def load_defaults(environment):
     for path in vars_files + secrets_files:
         if not path.is_file():
             raise ValueError(
-                'invalid environment "{environment}" (file "{path}" does not exist)'
+                f'invalid environment "{environment}": file "{path}" does not exist'
             )
 
     variables = {}

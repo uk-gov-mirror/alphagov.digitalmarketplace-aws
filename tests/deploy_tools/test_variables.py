@@ -80,6 +80,13 @@ def test_load_defaults_returns_a_merged_dict_of_variables(read_yaml_file, sops_d
     }
 
 
+def test_load_defaults_raises_value_error_if_environment_is_invalid(path_is_file):
+    path_is_file.return_value = False
+    expected_message = r'invalid environment "foobar": file ".*" does not exist'
+    with pytest.raises(ValueError, match=expected_message) as e:
+        deploy_tools.variables.load_defaults("foobar")
+
+
 @pytest.mark.parametrize("load_default_files", (True, False))
 @patch("deploy_tools.variables.load_defaults", autospec=True, return_value={})
 def test_load_variables_calls_loads_defaults_if_load_default_files_is_true(
