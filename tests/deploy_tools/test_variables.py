@@ -77,7 +77,13 @@ def test_load_defaults_returns_a_merged_dict_of_variables(read_yaml_file, sops_d
         "b": "beta",
         "g": "gamma",
         "key": "my-super-secret-password",
+        "environment": "testing",
     }
+
+
+@pytest.mark.parametrize("environment", ("testing", "production"))
+def test_load_defaults_always_includes_the_environment_in_output(environment):
+    assert deploy_tools.variables.load_defaults(environment)["environment"] == environment
 
 
 def test_load_defaults_raises_value_error_if_environment_is_invalid(path_is_file):

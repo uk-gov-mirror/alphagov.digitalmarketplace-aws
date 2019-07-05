@@ -87,7 +87,7 @@ def load_defaults(environment):
                 f'invalid environment "{environment}": file "{path}" does not exist'
             )
 
-    variables = {}
+    variables = {"environment": environment}
     for path in vars_files:
         variables = merge_dicts(variables, read_yaml_file(path))
     for path in secrets_files:
