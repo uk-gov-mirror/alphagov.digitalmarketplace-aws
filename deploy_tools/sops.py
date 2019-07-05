@@ -3,7 +3,7 @@
 
 This module can be used either as a library or a script.
 
-Usage: sops.py [-v] [ --stage=<stage> | <file> ]
+Usage: sops.py [-v] [ auth | <file> ]
 """
 
 import logging
@@ -20,7 +20,6 @@ from sh import aws, sops
 
 AWS_PROFILE = "sops"
 CACHE_DIR = Path.home() / ".aws" / "cli" / "cache"
-DM_CREDENTIALS_REPO = Path(os.environ["DM_CREDENTIALS_REPO"])
 
 
 def auth():
@@ -58,24 +57,6 @@ def auth():
     return environ
 
 
-def find_secrets_files(stage):
-    """Return the path to the secrets file for the stage
-
-    :param str stage: The stage to get secrets for, i.e. preview, staging, production
-    :return: The path to the secrets file for the specified stage
-    :rtype: Path
-    :raises ValueError: if the stage is not valid
-    """
-    if not DM_CREDENTIALS_REPO.is_dir():
-        raise RuntimeError(
-            "Directory '{}' does not exist. Is the DM_CREDENTIALS_REPO environment variable set correctly?"
-        )
-    fpath = DM_CREDENTIALS_REPO / "vars" / f"{stage}.yaml"
-    if not fpath.is_file():
-        raise ValueError(f"Expected a valid stage, but '{fpath}' does not exist")
-    return fpath
-
-
 def decrypt(fpath):
     """Decrypt a SOPS-encrypted file
 
@@ -96,12 +77,13 @@ def decrypt(fpath):
 
 def main(argv=None):
     args = docopt(__doc__, argv=argv)
-    auth()
+
     if args["-v"]:
         logging.basicConfig(level=logging.INFO)
-    if args["--stage"]:
-        print(get_secrets_for_stage(args["--stage"]))
-    elif args["<file>"]:
+
+    auth()
+
+    if args["<file>"]:
         print(decrypt(Path(args["<file>"])))
 
 
