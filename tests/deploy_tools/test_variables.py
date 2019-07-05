@@ -52,7 +52,7 @@ def test_load_defaults_gets_all_the_vars_and_secrets_files(
 
 
 def test_load_defaults_common_variables_are_always_loaded_first_before_specific_variables(
-        read_yaml_file, sops_decrypt, vars_dir
+    read_yaml_file, sops_decrypt, vars_dir
 ):
     # use a single call_args_list
     sops_decrypt.call_args_list = read_yaml_file.call_args_list
@@ -83,7 +83,9 @@ def test_load_defaults_returns_a_merged_dict_of_variables(read_yaml_file, sops_d
 
 @pytest.mark.parametrize("environment", ("testing", "production"))
 def test_load_defaults_always_includes_the_environment_in_output(environment):
-    assert deploy_tools.variables.load_defaults(environment)["environment"] == environment
+    assert (
+        deploy_tools.variables.load_defaults(environment)["environment"] == environment
+    )
 
 
 def test_load_defaults_raises_value_error_if_environment_is_invalid(path_is_file):
