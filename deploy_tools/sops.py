@@ -26,6 +26,7 @@ DM_CREDENTIALS_REPO = Path(os.environ["DM_CREDENTIALS_REPO"])
 def auth():
     """Get credentials for communicating with AWS as environment variables"""
     # We want to subsume the role of sops-wrapper and aws-auth
+    # TODO do this without calling out to the awscli so much
     aws_profile = os.getenv("AWS_PROFILE", AWS_PROFILE)
 
     def aws_configure_get(key, profile=aws_profile):
