@@ -21,9 +21,6 @@ def read_yaml_file():
 @pytest.fixture(autouse=True)
 def vars_dir(tmpdir):
     vars_dir = Path(tmpdir, "deploy_tools", "vars")
-    vars_dir.mkdir(parents=True, exist_ok=True)
-    (vars_dir / "common.yml").write_text("a: alpha\n")
-    (vars_dir / "testing.yml").write_text("b: beta\n")
     with patch("deploy_tools.variables.VARS_DIR", vars_dir) as path:
         yield path
 
@@ -32,12 +29,16 @@ def vars_dir(tmpdir):
 def secrets_dir(tmpdir):
     dm_credentials_repo = Path(tmpdir, "dm_credentials_repo")
     secrets_dir = dm_credentials_repo / "vars"
-    secrets_dir.mkdir(parents=True, exist_ok=True)
-    (secrets_dir / "testing.yaml").write_text("key: my-super-secret-password\n")
     with patch(
         "deploy_tools.variables.DM_CREDENTIALS_REPO", dm_credentials_repo
     ) as path:
         yield secrets_dir
+
+
+@pytest.fixture(autouse=True)
+def path_is_file():
+    with patch("deploy_tools.variables.Path.is_file", return_value=True) as mock:
+        yield mock
 
 
 def test_load_defaults_gets_all_the_vars_and_secrets_files(
@@ -48,6 +49,7 @@ def test_load_defaults_gets_all_the_vars_and_secrets_files(
     expected = [
         call(vars_dir / "common.yml"),
         call(vars_dir / "testing.yml"),
+        call(vars_dir / "users.yml"),
         call(secrets_dir / "testing.yaml"),
     ]
     got = read_yaml_file.call_args_list + sops_decrypt.call_args_list
@@ -65,13 +67,21 @@ def test_load_defaults_common_variables_are_always_loaded_first_before_specific_
     assert read_yaml_file.call_args_list[0] == call(vars_dir / "common.yml")
 
 
-def test_load_defaults_returns_a_merged_dict_of_variables(read_yaml_file, sops_decrypt):
-    read_yaml_file.side_effect = deploy_tools.utils.read_yaml_file
-    sops_decrypt.side_effect = deploy_tools.utils.read_yaml_file
+def test_load_defaults_returns_a_merged_dict_of_variables(read_yaml_file, sops_decrypt, vars_dir, secrets_dir):
+    files = lambda path: {
+            vars_dir / "common.yml": {"a": "alpha"},
+            vars_dir / "testing.yml": {"b": "beta"},
+            vars_dir / "users.yml": {"g": "gamma"},
+            secrets_dir / "testing.yaml": {"key": "my-super-secret-password"},
+    }[path]
+
+    read_yaml_file.side_effect = files
+    sops_decrypt.side_effect = files
 
     assert deploy_tools.variables.load_defaults("testing") == {
         "a": "alpha",
         "b": "beta",
+        "g": "gamma",
         "key": "my-super-secret-password",
     }
 
