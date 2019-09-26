@@ -1,11 +1,11 @@
 module "alarm_email_sns" {
-  source     = "../../modules/logging/alarms/email-notification"
+  source     = "../../modules/logging/log-alarms/email-notification"
   name       = "main"
   account_id = "${var.aws_main_account_id}"
 }
 
 module "alarm_recovery_email_sns" {
-  source     = "../../modules/logging/alarms/email-notification"
+  source     = "../../modules/logging/log-alarms/email-notification"
   name       = "main-recovery"
   account_id = "${var.aws_main_account_id}"
 }
