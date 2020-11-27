@@ -6,15 +6,6 @@ import json
 import requests
 from requests.exceptions import HTTPError
 
-def _read_in_chunks(file_path):
-    chunk_size = 30720 * 30720
-    with open(file_path, 'rb') as file_object:
-        while True:
-            data = file_object.read(chunk_size)
-            if not data:
-                break
-            yield data
-
 
 def upload_dump_to_s3():
     s3_post_url_data = json.loads(os.environ['S3_POST_URL_DATA'])
@@ -22,7 +13,7 @@ def upload_dump_to_s3():
 
     url = s3_post_url_data['url']
     fields = s3_post_url_data['fields']
-    files = {"file": _read_in_chunks(dump_file)}
+    files = {"file": open(dump_file, 'rb')}
 
     response = requests.post(url, data=fields, files=files)
 
