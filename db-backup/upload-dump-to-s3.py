@@ -9,6 +9,8 @@ from requests.exceptions import HTTPError
 
 def upload_dump_to_s3():
     s3_post_url_data = json.loads(os.environ['S3_POST_URL_DATA'])
+    print("IN HERE")
+    print(s3_post_url_data)
     dump_file = "/app/{}".format(os.environ['DUMP_FILE_NAME'])
 
     url = s3_post_url_data['url']
