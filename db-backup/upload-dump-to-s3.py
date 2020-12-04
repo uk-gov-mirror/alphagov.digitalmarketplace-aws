@@ -10,13 +10,16 @@ def upload_dump_to_s3():
     dump_file = "/app/{}".format(os.environ['DUMP_FILE_NAME'])
     url = s3_post_url_data['url']
     fields = s3_post_url_data['fields']
-    curl_args = ['curl', '-F', f"@file={dump_file}"]
+    curl_args = ['curl']
     for k,v in fields.items():
         curl_args.append('-F')
         curl_args.append(f"{k}={v}")
+    curl_args.append('-F')
+    curl_args.append(f"@file={dump_file}")
     curl_args.append(url)
     try:
-        subprocess.check_output(curl_args)
+        response = subprocess.check_output(curl_args)
+        print(response)
     except subprocess.CalledProcessError as e:
         Exception(f"Upload failed with error: " + e.output)
     
