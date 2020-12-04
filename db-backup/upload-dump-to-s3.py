@@ -17,12 +17,11 @@ def upload_dump_to_s3():
     curl_args.append('-F')
     curl_args.append(f"file=@{dump_file}")
     curl_args.append(url)
-    print(curl_args)
     try:
         response = subprocess.check_output(curl_args)
         print(response)
     except subprocess.CalledProcessError as e:
-        Exception(f"Upload failed with error: " + e.output)
+        raise Exception(f"Upload failed with error: " + e.output)
     
     print('Successfully uploaded {} to {}'.format(dump_file, url))
 
