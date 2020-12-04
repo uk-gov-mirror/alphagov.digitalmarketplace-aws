@@ -15,8 +15,9 @@ def upload_dump_to_s3():
         curl_args.append('-F')
         curl_args.append(f"{k}={v}")
     curl_args.append('-F')
-    curl_args.append(f"@file={dump_file}")
+    curl_args.append(f"file=@{dump_file}")
     curl_args.append(url)
+    print(curl_args)
     try:
         response = subprocess.check_output(curl_args)
         print(response)
